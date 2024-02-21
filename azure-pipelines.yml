@@ -5,31 +5,30 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-
 - task: AzureCLI@2
   inputs:
-    azureSubscription: ''
+    azureSubscription: 'Azure subscription 1(7ec5dade-3faa-4fd5-a30b-a0b61b765338)'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: |
-      docker build -t mylabacr13.azurecr.io/web-game:tag 2048-game
-      az acr login -n mylabacr13
-      docker push mylabacr13.azurecr.io/web-game:tag
+      docker build -t baluacr.azurecr.io/web-game:tag 2048-game
+            az acr login -n baluacr
+            docker push baluacr.azurecr.io/web-game:tag
 
 - script: cat 01_kubernetes_aks/app-deploy.yaml
 
 - task: Kubernetes@1
   inputs:
     connectionType: 'Azure Resource Manager'
-    azureSubscriptionEndpoint: 'Towards-AzurePortal'
-    azureResourceGroup: 'TestLab-RG'
-    kubernetesCluster: 'testlab-aks'
+    azureSubscriptionEndpoint: 'Azure subscription 1(7ec5dade-3faa-4fd5-a30b-a0b61b765338)'
+    azureResourceGroup: 'aksrg'
+    kubernetesCluster: 'AKSCluster'
     namespace: 'default'
     command: 'apply'
     useConfigurationFile: true
     configuration: '01_kubernetes_aks'
     secretType: 'dockerRegistry'
     containerRegistryType: 'Azure Container Registry'
-    azureSubscriptionEndpointForSecrets: 'Towards-AzurePortal'
-    azureContainerRegistry: 'mylabacr13.azurecr.io'
+    azureSubscriptionEndpointForSecrets: 'Azure subscription 1(1)(7ec5dade-3faa-4fd5-a30b-a0b61b765338)'
+    azureContainerRegistry: 'baluacr.azurecr.io'
     forceUpdate: false
